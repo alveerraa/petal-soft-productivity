@@ -121,6 +121,16 @@ petal/
     ├── theme.py
     └── components.py
 
+## 🖥 Platform
+- macOS (Apple Silicon)
+- Offline-first desktop app
+
+## 📦 Installation (macOS)
+1. Download the `.zip` file
+2. Unzip it
+3. Drag **PetalOS.app** into Applications
+4. Right-click → Open (first launch only)
+
 ##  ▶️ How to Run Locally
 
 1️⃣ Clone the repository
@@ -153,3 +163,4 @@ pygame
 Built with care by Alveera
 
 If this project resonates with you, feel free to ⭐ star the repo.
+
