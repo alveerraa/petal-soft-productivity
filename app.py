@@ -1,3 +1,13 @@
+import sys
+import os
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS  # PyInstaller temp folder
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 import customtkinter as ctk
 from PIL import Image, ImageDraw, ImageFont
 import json
@@ -14,7 +24,7 @@ ctk.set_appearance_mode("dark")  # Dark mode for pixel game aesthetic
 
 # ================= PIXEL TEXT HELPER =================
 def pixel_text(text, size, color=TITLE_GLOW):
-    font_path = "assets/fonts/PixelifySans.ttf"
+    font_path = resource_path("assets/fonts/PixelifySans.ttf")
     font = ImageFont.truetype(font_path, size)
 
     dummy = Image.new("RGBA", (1, 1))
@@ -130,27 +140,58 @@ class PetalApp(ctk.CTk):
         self.update_stats_bar()
 
     # ================= IMAGES =================
+
     def img(self, path, size):
+        """Load an image with error handling."""
         try:
-            return ctk.CTkImage(Image.open(path), size=size)
-        except:
+            full_path = resource_path(path)
+            return ctk.CTkImage(
+                Image.open(full_path),
+                size=size
+            )
+        except FileNotFoundError:
+            print(f"[IMG NOT FOUND] {path}")
+            return None
+        except Exception as e:
+            print(f"[IMG LOAD FAILED] {path} -> {e}")
             return None
 
     def load_images(self):
-        imgs = {"moods": {}, "plants": {}}
-        
-        for mood in ["sleepy", "motivated", "angry", "sad"]:
+        """Load all application images."""
+        imgs = {
+            "moods": {},
+            "plants": {},
+            "ui": {}  # You can add UI images here if needed
+        }
+
+        # Load mood icons
+        mood_names = ["sleepy", "motivated", "angry", "sad"]
+        for mood in mood_names:
             img = self.img(f"assets/icons/{mood}.png", (48, 48))
             if img:
                 imgs["moods"][mood.capitalize()] = img
+            else:
+                # Create a placeholder or use default
+                print(f"Warning: Could not load mood icon for {mood}")
 
-        for p in ["rose", "hydrangea", "sunflower"]:
-            imgs["plants"][p] = {
-                "seed": self.img(f"assets/plants/{p}_seed.png", (64, 64)),
-                "grow": self.img(f"assets/plants/{p}_grow.png", (64, 64)),
-                "bloom": self.img(f"assets/plants/{p}_bloom.png", (64, 64)),
-            }
+        # Load plant images
+        plant_types = ["rose", "hydrangea", "sunflower"]
+        growth_stages = ["seed", "grow", "bloom"]
+
+        for plant in plant_types:
+            imgs["plants"][plant] = {}
+            for stage in growth_stages:
+                img_path = f"assets/plants/{plant}_{stage}.png"
+                img = self.img(img_path, (64, 64))
+                if img:
+                    imgs["plants"][plant][stage] = img
+                else:
+                    print(f"Warning: Could not load {plant} {stage} image")
+                    imgs["plants"][plant][stage] = None  # Explicitly set to None
+
         return imgs
+
+    
     
     # ================= PROGRESS FLOWER =================
     def progress_flower_card(self, parent):

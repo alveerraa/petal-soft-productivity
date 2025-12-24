@@ -1,0 +1,16 @@
+{
+  "total_sessions": 1,
+  "today_sessions": 0,
+  "mood": "Sleepy",
+  "notes": "",
+  "main_task": "",
+  "task_done": false,
+  "streak": 0,
+  "last_active_date": "",
+  "plants": {
+    "rose": 0,
+    "hydrangea": 0,
+    "sunflower": 0
+  },
+  "history": []
+}
